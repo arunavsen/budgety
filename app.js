@@ -99,6 +99,20 @@ var UIController = (function () {
             document.querySelector(element).insertAdjacentHTML('beforeend',newHtml);
         },
 
+        clearFields: function(){
+            var fields, fieldsArr;
+
+            fields = document.querySelectorAll(DOMstrings.inputDescription+", "+DOMstrings.inputValue);
+
+            fieldsArr = Array.prototype.slice.call(fields);
+
+            fieldsArr.forEach(function(current, index, array) {
+                current.value="";
+            });
+
+            fieldsArr[0].focus();
+
+        },
         // our private DOMstrings now will be public
         getDomstrings: function () {
             return DOMstrings;
@@ -138,6 +152,9 @@ var controller = (function (budjetCtrl, UICtrl) {
 
         // 3. Add Item to the UI
         UICtrl.addListItem(newItem, input.type);
+
+        // 4. Clean the input fields
+        UICtrl.clearFields();
 
         // 4. Calculate the budjet
 
