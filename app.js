@@ -12,6 +12,14 @@ var budgetController = (function () {
     this.value = value;
   };
 
+  var calculateTotal = function(type){
+    var sum = 0;
+    data.allItems[type].forEach(function(cur){
+      sum = sum + cur.value;
+    });
+    data.totals[type] = sum;
+  }
+
   var data = {
     allItems: {
       exp: [],
@@ -21,6 +29,8 @@ var budgetController = (function () {
       exp: 0,
       inc: 0,
     },
+    budjet: 0,
+    percentage: -1
   };
 
   return {
@@ -46,6 +56,30 @@ var budgetController = (function () {
 
       // Return the new element
       return newItem;
+    },
+
+    calculateBudget: function(){
+      // calculate total income and total expenses
+      calculateTotal('exp');
+      calculateTotal('inc');
+
+      // calculate the budjet: income - expense
+      data.budjet = data.totals.inc - data.totals.exp;
+
+      // calculate the percentage of income that we spent
+      if(data.totals.inc > 0){
+        data.percentage = Math.round((data.totals.exp/data.totals.inc)*100);
+      }else{
+        data.percentage = -1;
+      }
+    },
+    getBudjet:function(){
+      return {
+        budget: data.budjet,
+        totalInc: data.totals.inc,
+        totalExp: data.totals.exp,
+        percentage: data.percentage
+      }
     },
     testing: function () {
       console.log(data);
@@ -139,6 +173,16 @@ var controller = (function (budjetCtrl, UICtrl) {
     });
   };
 
+  var updateBudjet = function(){
+    // 1. Calculate the budjet
+    budjetCtrl.calculateBudget();
+    // 2. Return the budjet
+    var budget = budjetCtrl.getBudjet();
+    // 3. Display the budjet on the UI
+    console.log(budget);
+  }
+
+
   var ctrlAddItem = function () {
     var input, newItem;
 
@@ -154,11 +198,10 @@ var controller = (function (budjetCtrl, UICtrl) {
 
       // 4. Clean the input fields
       UICtrl.clearFields();
+
+      // calculate and update budget
+      updateBudjet();
     }
-
-    // 4. Calculate the budjet
-
-    // 5. Display the budjet on the UI
   };
 
   return {
