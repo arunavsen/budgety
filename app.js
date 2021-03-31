@@ -159,6 +159,12 @@ var UIController = (function () {
     dateLabel: '.budget__title--month'
   };
 
+  var nodeListForSearch = function(list, callback){
+    for(var i=0; i<list.length; i++){
+      callback(list[i], i);
+    }
+  };
+
   var formatNumber = function(num, type){
     var numSplit, int, dec, type;
     /*
@@ -281,6 +287,21 @@ var UIController = (function () {
       document.querySelector(DOMstrings.dateLabel).textContent = months[month]+' '+year;
     },
 
+    changedType: function(){
+      var fields;
+
+      fields = document.querySelectorAll(
+        DOMstrings.inpuType+','+
+        DOMstrings.inputDescription+','+
+        DOMstrings.inputValue);
+
+        nodeListForSearch(fields,function(cur){
+          cur.classList.toggle('red-focus');
+        });
+
+        document.querySelector(DOMstrings.inputAddBtn).classList.toggle('red');
+    },
+
     // our private DOMstrings now will be public
     getDomstrings: function () {
       return DOMstrings;
@@ -307,6 +328,9 @@ var controller = (function (budjetCtrl, UICtrl) {
     });
 
     document.querySelector(DOM.container).addEventListener('click',ctrlDeleteItem);
+
+    document.querySelector(DOM.inpuType).addEventListener('change', UICtrl.changedType);
+
   };
 
   var updateBudjet = function(){
